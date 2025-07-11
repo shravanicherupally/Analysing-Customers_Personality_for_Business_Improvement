@@ -1,0 +1,6 @@
+Model,BestParams
+Logistic Regression,"{'C': 0.01, 'solver': 'liblinear'}"
+SVM,"{'C': 0.1, 'kernel': 'linear'}"
+Random Forest,"{'max_depth': None, 'n_estimators': 50}"
+AdaBoost,"{'learning_rate': 0.5, 'n_estimators': 50}"
+Gradient Boosting,"{'learning_rate': 0.05, 'max_depth': 3, 'n_estimators': 50}"
