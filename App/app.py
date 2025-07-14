@@ -1,5 +1,3 @@
-# ✅ app.py
-
 from flask import Flask, render_template, request
 import numpy as np
 import pandas as pd
@@ -7,22 +5,14 @@ import joblib
 
 app = Flask(__name__)
 
-# ---------------------------
-# 1️⃣ Load Scaler and Model
-# ---------------------------
+# Load saved model and scaler
 model = joblib.load('model/model.pkl')
 scaler = joblib.load('model/scaler.pkl')
 
-# ---------------------------
-# 2️⃣ Home Route
-# ---------------------------
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
     return render_template('index.html', prediction=None)
 
-# ---------------------------
-# 3️⃣ Predict Route
-# ---------------------------
 @app.route('/predict', methods=['POST'])
 def predict():
     # Get input values from form
@@ -33,10 +23,7 @@ def predict():
     MntWines = float(request.form['MntWines'])
     NumWebPurchases = int(request.form['NumWebPurchases'])
 
-    # ---------------------------
-    # Feature Engineering: Add TotalChildren
-    # Drop Teenhome to match training
-    # ---------------------------
+    # Feature engineering: TotalChildren = Kidhome + Teenhome
     TotalChildren = Kidhome + Teenhome
 
     # Create input DataFrame
@@ -47,14 +34,20 @@ def predict():
     # Scale input
     input_scaled = scaler.transform(input_data)
 
-    # Predict
+    # Make prediction
     prediction = model.predict(input_scaled)[0]
 
-    # Return result
-    return render_template('index.html', prediction=prediction)
+    # Pass input back to template
+    inputs = {
+        'Income': Income,
+        'Kidhome': Kidhome,
+        'Teenhome': Teenhome,
+        'Recency': Recency,
+        'MntWines': MntWines,
+        'NumWebPurchases': NumWebPurchases
+    }
 
-# ---------------------------
-# 4️⃣ Run the App
-# ---------------------------
+    return render_template('index.html', prediction=prediction, inputs=inputs)
+
 if __name__ == "__main__":
     app.run(debug=True)
