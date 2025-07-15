@@ -5,7 +5,7 @@ import joblib
 
 app = Flask(__name__)
 
-# Load saved model and scaler
+# Load your saved model and scaler
 model = joblib.load('model/model.pkl')
 scaler = joblib.load('model/scaler.pkl')
 
@@ -15,7 +15,7 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Get input values from form
+    # ✅ 1. Get form inputs
     Income = float(request.form['Income'])
     Kidhome = int(request.form['Kidhome'])
     Teenhome = int(request.form['Teenhome'])
@@ -23,21 +23,21 @@ def predict():
     MntWines = float(request.form['MntWines'])
     NumWebPurchases = int(request.form['NumWebPurchases'])
 
-    # Feature engineering: TotalChildren = Kidhome + Teenhome
+    # ✅ 2. Feature engineering — total children
     TotalChildren = Kidhome + Teenhome
 
-    # Create input DataFrame
-    input_data = pd.DataFrame([[
+    # ✅ 3. Prepare data in correct order & shape
+    input_df = pd.DataFrame([[
         Income, Kidhome, Recency, MntWines, NumWebPurchases, TotalChildren
     ]], columns=['Income', 'Kidhome', 'Recency', 'MntWines', 'NumWebPurchases', 'TotalChildren'])
 
-    # Scale input
-    input_scaled = scaler.transform(input_data)
+    # ✅ 4. Scale
+    input_scaled = scaler.transform(input_df)
 
-    # Make prediction
+    # ✅ 5. Predict
     prediction = model.predict(input_scaled)[0]
 
-    # Pass input back to template
+    # ✅ 6. Package original inputs for display
     inputs = {
         'Income': Income,
         'Kidhome': Kidhome,
